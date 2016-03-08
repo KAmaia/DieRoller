@@ -7,16 +7,17 @@ using System.Threading.Tasks;
 namespace DieRoller {
 	class SystematicDieRoller {
 		private bool running;
-		private Die die1, die2;
 		private int maxRolls;
 
+
 		private Dictionary<int, int> results = new Dictionary<int, int>();
+		private List<Die> dice = new List<Die>();
 
-		public SystematicDieRoller( int maxRolls, int die1Sides, int die2Sides ) {
-			die1 = new Die( die1Sides );
-			die2 = new Die( die2Sides );
+		public SystematicDieRoller( int maxRolls, int numberOfDice, int Sides) {
+			for(int x = 0; x < numberOfDice; x++ ) {
+				dice.Add( new Die( Sides ) );
+			}
 			this.maxRolls = maxRolls;
-
 		}
 
 		public void Run( ) {
@@ -25,7 +26,11 @@ namespace DieRoller {
 				DictionaryInit( );
 				DisplayRunInfo( );
 				for ( int i = 1; i < maxRolls; i++ ) {
-					int total = die1.Roll() + die2.Roll();
+					int total = 0;
+					foreach ( Die d in dice ) {
+						total += d.Roll( );
+					}
+
 					results[total] += 1;
 				}
 				DisplayResults( );
@@ -39,7 +44,7 @@ namespace DieRoller {
 
 		//init the dictionary
 		private void DictionaryInit( ) {
-			for ( int i = 2; i <= die1.NumberOfSides + die2.NumberOfSides; i++ ) {
+			for (int i = 2; i <= dice.Count * dice[0].NumberOfSides; i++  ) {
 				if ( !results.ContainsKey( i ) ) {
 					results.Add( i, 0 );
 				}
@@ -52,8 +57,7 @@ namespace DieRoller {
 		private void DisplayRunInfo( ) {
 			Console.Clear( );
 			Console.WriteLine( "Using The Following Values:" );
-			Console.WriteLine( "Die 1 d" + die1.NumberOfSides );
-			Console.WriteLine( "Die 2 d" + die2.NumberOfSides );
+			Console.WriteLine( "Number Of Dice: " + dice.Count );
 			Console.WriteLine( "Rolling: " + maxRolls + " times." );
 		}
 
